@@ -1231,7 +1231,7 @@ Object.assign(window, {
 
 <!-- ── Book components ── -->
 <script type="text/babel">
-const { useState: useStateBk } = React;
+const { useState: useStateBk, useEffect: useEffectBk } = React;
 
 const ORIGINS = {
   lasanha: "Bolonha · Itália",
@@ -1326,38 +1326,63 @@ function buildPages() {
   return pages;
 }
 
-const FOOD_PHOTOS = {
-  "lasanha": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Lasagna.jpg/800px-Lasagna.jpg",
-  "brigadeiro": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Brigadeiro_(candy).JPG/800px-Brigadeiro_(candy).JPG",
-  "risoto-parmesao": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Risotto_(1).jpg/800px-Risotto_(1).jpg",
-  "pizza-caseira": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Pizza.jpg/800px-Pizza.jpg",
-  "panqueca-americana": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Silver_dollar_pancakes.JPG/800px-Silver_dollar_pancakes.JPG",
-  "hamburguer": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/NCI_Visuals_Food_Hamburger.jpg/800px-NCI_Visuals_Food_Hamburger.jpg",
-  "mac-cheese": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Original_Mac_n_Cheese_.jpg/800px-Original_Mac_n_Cheese_.jpg",
-  "batata-frita": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/French_Fries.JPG/800px-French_Fries.JPG",
-  "omelete": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Omelette.JPG/800px-Omelette.JPG",
-  "crepe": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Crepes_in_Chamonix.JPG/800px-Crepes_in_Chamonix.JPG",
-  "pure-batata": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Mash_Potatoes.jpg/800px-Mash_Potatoes.jpg",
-  "pao-de-queijo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Pao_de_queijo_(4813929850).jpg/800px-Pao_de_queijo_(4813929850).jpg",
-  "cookies": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/KS_Gourmet_Chocolate_Chunk_cookies.JPG/800px-KS_Gourmet_Chocolate_Chunk_cookies.JPG",
-  "macarrao-bolonhesa": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Spaghetti_Bolognese_von_Unico_Tauberbischofsheim_3.jpg/800px-Spaghetti_Bolognese_von_Unico_Tauberbischofsheim_3.jpg",
-  "nuggets": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/KFC_Rice_Set_(Malaysia)_and_Chicken_Nuggets.jpg/800px-KFC_Rice_Set_(Malaysia)_and_Chicken_Nuggets.jpg",
-  "feijao-carioca": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Tutu_de_feij%C3%A3o.JPG/800px-Tutu_de_feij%C3%A3o.JPG",
-  "arroz-branco": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Nasi_putih_cooked_rice.JPG/800px-Nasi_putih_cooked_rice.JPG",
-  "strogonoff-frango": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Beef_Stroganoff_russian_themed_dinner.jpg/800px-Beef_Stroganoff_russian_themed_dinner.jpg",
-  "macarrao-tomate": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Pasta%2C_Tomato_Sauce%2C_Red_Lentils_%26_Sprouts_(4368525956).jpg/800px-Pasta%2C_Tomato_Sauce%2C_Red_Lentils_%26_Sprouts_(4368525956).jpg",
-  "bolo-cenoura": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/2020-08-27_23_58_46_A_slice_of_carrot_cake_in_the_Dulles_section_of_Sterling%2C_Loudoun_County%2C_Virginia.jpg/800px-2020-08-27_23_58_46_A_slice_of_carrot_cake_in_the_Dulles_section_of_Sterling%2C_Loudoun_County%2C_Virginia.jpg",
-  "misto-quente": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Grilled_ham_and_cheese_014.JPG/800px-Grilled_ham_and_cheese_014.JPG",
+/* Wikipedia article titles for each recipe — used to fetch the article's main photo */
+const WIKI_ARTICLES = {
+  "lasanha":          "Lasagne",
+  "pao-de-queijo":    "Pão_de_queijo",
+  "brigadeiro":       "Brigadeiro",
+  "arroz-branco":     "White_rice",
+  "feijao-carioca":   "Feijão-carioca",
+  "cuscuz-nordestino":"Cuscuz",
+  "misto-quente":     "Misto-quente",
+  "pure-batata":      "Mashed_potato",
+  "macarrao-tomate":  "Pasta_al_pomodoro",
+  "strogonoff-frango":"Strogonoff",
+  "bolo-cenoura":     "Bolo_de_cenoura",
+  "risoto-parmesao":  "Risotto",
+  "pizza-caseira":    "Pizza",
+  "macarrao-bolonhesa":"Bolognese_sauce",
+  "panqueca-americana":"Pancake",
+  "hamburguer":       "Hamburger",
+  "cookies":          "Cookie",
+  "mac-cheese":       "Macaroni_and_cheese",
+  "nuggets":          "Chicken_nugget",
+  "omelete":          "Omelette",
+  "crepe":            "Crêpe",
+  "batata-frita":     "French_fries",
 };
+
+const _wikiCache = {};
 
 function FoodPhoto({ recipe, tall }) {
   const h = recipe.hue;
   const bg = `radial-gradient(130% 120% at 28% 16%, hsl(${h} 58% 68%), hsl(${h} 52% 52%) 42%, hsl(${(h + 10) % 360} 46% 34%))`;
-  const photoUrl = FOOD_PHOTOS[recipe.id];
+  const cached = _wikiCache[recipe.id];
+  const [photoUrl, setPhotoUrl] = useStateBk(cached || null);
+
+  useEffectBk(() => {
+    const title = WIKI_ARTICLES[recipe.id];
+    if (!title || recipe.id in _wikiCache) return;
+    _wikiCache[recipe.id] = null;
+    const lang = ["pao-de-queijo","brigadeiro","arroz-branco","feijao-carioca",
+                  "cuscuz-nordestino","misto-quente","strogonoff-frango","bolo-cenoura"].includes(recipe.id) ? "pt" : "en";
+    fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`)
+      .then(r => r.json())
+      .then(d => {
+        const url = d.originalimage?.source || d.thumbnail?.source || null;
+        _wikiCache[recipe.id] = url;
+        if (url) setPhotoUrl(url);
+      })
+      .catch(() => {});
+  }, [recipe.id]);
+
   return (
     <figure className={"photo" + (tall ? " photo--tall" : "")}>
       <div className="photo__img" style={{ background: bg }}>
-        {photoUrl && <img src={photoUrl} alt={recipe.title} className="photo__real" onError={e => { e.target.style.display = "none"; }} />}
+        {photoUrl && (
+          <img src={photoUrl} alt={recipe.title} className="photo__real"
+               onError={e => { e.target.style.display = "none"; }} />
+        )}
         <div className="photo__grain" />
         {!photoUrl && (
           <div className="photo__plate">
