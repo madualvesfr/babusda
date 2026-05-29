@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Receituário da Vovó</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Playfair+Display:ital,wght@0,500..800;1,500..600&family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400..600;1,400..500&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --head: "Fraunces", Georgia, serif;
+  --body: "Lora", Georgia, serif;
+  --hand: "Caveat", cursive;
+  --ink: #3a3026;
+  --ink-soft: #6c5f4e;
+  --head-color: #1f4e50;
+  --accent: #b1812e;
+  --paper: #f4ead3;
+  --paper-edge: #e3d3af;
+  --cover: #233b3d;
+  --rule: rgba(31, 78, 80, .45);
+  --backdrop-1: #b09a7d;
+  --backdrop-2: #8a7458;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { font-family: var(--body); color: var(--ink); background: radial-gradient(120% 120% at 50% 22%, var(--backdrop-1), var(--backdrop-2) 78%); overflow: hidden; -webkit-font-smoothing: antialiased; transition: background .5s ease; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; }
+::selection { background: var(--accent); color: #fff; }
+#root { height: 100%; }
+.stage { position: relative; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; }
+.stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 100% at 50% 45%, transparent 55%, rgba(40,28,18,.34)); }
+.book-wrap { position: relative; transform-origin: center center; padding: 16px; border-radius: 8px 12px 12px 8px; background: linear-gradient(90deg, #15262780, var(--cover) 5%, var(--cover) 95%, #15262780); box-shadow: 0 2px 4px rgba(0,0,0,.3), 0 40px 90px -30px rgba(0,0,0,.7); }
+.book-wrap::before { content: ""; position: absolute; left: 50%; top: 12px; bottom: 12px; width: 2px; transform: translateX(-50%); background: rgba(0,0,0,.4); z-index: 6; }
+.book { position: relative; width: 1000px; height: 700px; display: flex; perspective: 2400px; background: var(--paper); border-radius: 3px; }
+.slot { position: relative; width: 500px; height: 700px; overflow: hidden; }
+.slot--left { border-radius: 4px 0 0 4px; }
+.slot--right { border-radius: 0 4px 4px 0; }
+.slot--left::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5; background: linear-gradient(270deg, rgba(60,40,20,.20), transparent 13%); }
+.slot--right::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5; background: linear-gradient(90deg, rgba(60,40,20,.20), transparent 13%); }
+.pg { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); background-image: radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.32), transparent 60%), radial-gradient(120% 120% at 50% 120%, rgba(120,90,50,.10), transparent 55%); }
+.pg--paper::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: multiply; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); }
+.flip { position: absolute; top: 0; width: 500px; height: 700px; transform-style: preserve-3d; z-index: 8; transition: transform .72s cubic-bezier(.42,.02,.25,1); }
+.flip--next { left: 500px; transform-origin: left center; transform: rotateY(0deg); }
+.flip--next.go { transform: rotateY(-179.5deg); }
+.flip--prev { left: 0; transform-origin: right center; transform: rotateY(0deg); }
+.flip--prev.go { transform: rotateY(179.5deg); }
+.flip__face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 14px 40px -16px rgba(0,0,0,.4); }
+.flip__front { transform: rotateY(0deg); }
+.flip__back { transform: rotateY(180deg); }
+.flip__shade { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .72s ease; z-index: 9; }
+.flip.go .flip__shade { opacity: 1; }
+.flip--next .flip__front .flip__shade { background: linear-gradient(90deg, rgba(0,0,0,.30), transparent 60%); }
+.flip--prev .flip__front .flip__shade { background: linear-gradient(270deg, rgba(0,0,0,.30), transparent 60%); }
+.book.noturn .flip { transition: none; }
+.pg__head { text-align: center; }
+.eyebrow { font-family: var(--body); font-style: italic; color: var(--accent); letter-spacing: .06em; font-size: 14px; margin: 0 0 6px; }
+.pg__title { font-family: var(--head); color: var(--head-color); font-size: 38px; letter-spacing: -.01em; }
+.orn { color: var(--accent); display: block; margin: 12px auto; }
+.folio { position: absolute; bottom: 28px; font-family: var(--head); color: var(--ink-soft); font-size: 14px; }
+.folio--left { left: 44px; }
+.folio--right { right: 44px; }
+.pg--cover { background: radial-gradient(100% 80% at 50% 0%, rgba(255,255,255,.07), transparent 60%), linear-gradient(150deg, color-mix(in oklab, var(--cover) 86%, #fff 8%), var(--cover) 58%, color-mix(in oklab, var(--cover) 76%, #000 22%)); color: #f4ecd6; display: grid; place-items: center; }
+.cover__frame { text-align: center; padding: 40px; margin: 26px; width: calc(100% - 52px); height: calc(100% - 52px); border: 1.5px solid rgba(214,178,102,.5); border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.cover__frame .orn { color: #c9a85c; }
+.cover__kick { font-family: var(--body); font-style: italic; letter-spacing: .22em; text-transform: uppercase; font-size: 13px; color: #c9a85c; margin: 0; }
+.cover__title { font-family: var(--head); font-size: 58px; line-height: 1.02; color: #f3ecd6; margin: 8px 0; letter-spacing: -.01em; }
+.cover__sub { font-style: italic; color: #d8cba8; max-width: 30ch; margin: 6px 0 0; font-size: 16px; line-height: 1.5; }
+.cover__sign { font-family: var(--hand); font-size: 25px; color: #c9a85c; margin-top: 14px; }
+.pg--toc { padding: 58px 56px; display: flex; flex-direction: column; }
+.pg--toc .pg__head { margin-bottom: 24px; }
+.toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.toc__row { display: flex; align-items: baseline; gap: 12px; padding: 14px 8px; cursor: pointer; border-radius: 6px; transition: background .2s; }
+.toc__row:hover { background: rgba(31,78,80,.08); }
+.toc__part { font-family: var(--head); color: var(--accent); font-size: 20px; min-width: 30px; }
+.toc__name { font-family: var(--head); font-size: 22px; color: var(--ink); }
+.toc__dots { flex: 1; border-bottom: 1.5px dotted var(--rule); transform: translateY(-4px); }
+.toc__cuisine { font-style: italic; color: var(--ink-soft); font-size: 15px; }
+.toc__note { font-family: var(--hand); font-size: 21px; color: var(--accent); text-align: center; margin-top: auto; }
+.toc__row--menu { margin-top: 6px; border-top: 1.5px dotted var(--rule); }
+.toc__row--menu .toc__part { font-size: 16px; }
+
+/* ---------- Restaurant menu ---------- */
+.pg--menu { padding: 50px 48px 36px; display: flex; flex-direction: column; }
+.menu__head { text-align: center; margin-bottom: 14px; }
+.menu__head--cont { display: flex; align-items: center; justify-content: center; gap: 12px; font-family: var(--head); font-style: italic; color: var(--ink-soft); font-size: 18px; border-bottom: 1.5px solid var(--rule); padding-bottom: 14px; margin-bottom: 18px; }
+.menu__head--cont .orn { margin: 0; }
+.menu__group { margin-bottom: 16px; }
+.menu__gh { font-family: var(--head); color: var(--accent); font-size: 17px; letter-spacing: .02em; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 5px; }
+.menu__gh em { font-style: italic; text-transform: none; font-weight: 400; color: var(--ink-soft); font-size: 14px; }
+.menu__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.menu__item { display: flex; gap: 13px; align-items: flex-start; cursor: pointer; padding: 4px; margin: -4px; border-radius: 6px; transition: background .18s; }
+.menu__item:hover { background: rgba(0,0,0,.04); }
+.menu__thumb { flex-shrink: 0; width: 52px; height: 52px; border-radius: 4px; display: grid; place-items: center; box-shadow: 0 2px 6px -2px rgba(0,0,0,.4), inset 0 1px 3px rgba(255,255,255,.25); overflow: hidden; }
+.menu__thumb span { font-size: 24px; color: rgba(255,255,255,.95); font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.menu__info { flex: 1; min-width: 0; }
+.menu__namerow { display: flex; align-items: baseline; gap: 7px; }
+.menu__name { font-family: var(--head); font-size: 17px; color: var(--head-color); white-space: nowrap; }
+.menu__leader { flex: 1; border-bottom: 1.5px dotted var(--rule); transform: translateY(-4px); min-width: 14px; }
+.menu__price { font-family: var(--head); font-size: 14px; color: var(--accent); font-style: italic; white-space: nowrap; }
+.menu__desc { margin: 2px 0 0; font-size: 13px; line-height: 1.4; color: var(--ink-soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pg--section { padding: 62px 52px; display: flex; flex-direction: column; }
+.section__top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+.section__partword { font-family: var(--hand); font-size: 44px; color: var(--head-color); line-height: 1; }
+.section__partnum { font-family: var(--head); font-weight: 600; font-size: 28px; color: #fff; background: var(--head-color); padding: 3px 12px; border-radius: 3px; }
+.section__title { font-family: var(--head); font-size: 44px; line-height: 1.04; color: var(--head-color); letter-spacing: -.015em; margin: 8px 0 18px; }
+.section__band { background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 82%, #000)); color: #fff7e6; font-style: italic; padding: 12px 16px; border-radius: 3px; font-size: 15.5px; line-height: 1.45; }
+.section__list { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.section__list li { display: flex; gap: 12px; align-items: baseline; cursor: pointer; padding: 5px 6px; border-radius: 5px; transition: background .18s; }
+.section__list li:hover { background: rgba(31,78,80,.08); }
+.section__li-num { font-family: var(--head); color: var(--accent); font-size: 17px; }
+.section__li-name { font-family: var(--body); font-size: 18px; color: var(--ink); }
+.pg--motif { color: #f4ecd6; display: grid; place-items: center; background: linear-gradient(150deg, color-mix(in oklab, var(--head-color) 88%, #fff 8%), var(--head-color) 55%, color-mix(in oklab, var(--head-color) 74%, #000 22%)); }
+.motif__inner { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 2; }
+.motif__cuisine { font-style: italic; letter-spacing: .2em; text-transform: uppercase; font-size: 16px; color: rgba(255,255,255,.85); }
+.motif__big { font-size: 200px; line-height: .9; color: rgba(255,255,255,.92); text-shadow: 0 6px 24px rgba(0,0,0,.25); }
+.pg--recipe { padding: 38px 44px 34px; display: flex; flex-direction: column; }
+.pg--recipe > *, .pg--method > * { flex-shrink: 0; }
+.photo { margin: 0 0 16px; }
+.photo__img { position: relative; width: 100%; height: 178px; border-radius: 3px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,.18), 0 14px 30px -16px rgba(0,0,0,.5); display: grid; place-items: center; }
+.photo__grain { position: absolute; inset: 0; mix-blend-mode: overlay; opacity: .5; background-image: radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px); background-size: 6px 6px; }
+.photo__plate { width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,.14); display: grid; place-items: center; box-shadow: inset 0 2px 16px rgba(0,0,0,.2); }
+.photo__plate-in { width: 82%; height: 82%; border-radius: 50%; border: 1.4px dashed rgba(255,255,255,.4); display: grid; place-items: center; }
+.photo__plate-in span { font-size: 60px; color: rgba(255,255,255,.92); font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,.18); }
+.photo__cap { position: absolute; bottom: 8px; right: 12px; font-family: var(--hand); font-size: 22px; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.45); }
+.rec__titlewrap { display: flex; align-items: baseline; gap: 10px; border-top: 1.5px solid var(--rule); padding-top: 11px; }
+.rec__num { font-family: var(--head); font-size: 25px; color: var(--accent); }
+.rec__title { font-family: var(--head); font-size: 27px; line-height: 1.1; color: var(--head-color); letter-spacing: -.01em; }
+.rec__origin { font-style: italic; color: var(--accent); margin: 9px 0 11px; padding-bottom: 10px; border-bottom: 1.5px solid var(--rule); font-size: 14.5px; }
+.rec__intro { font-size: 15px; line-height: 1.5; margin: 0 0 14px; text-align: justify; hyphens: auto; }
+.dropcap { float: left; font-family: var(--head); font-weight: 600; color: var(--head-color); font-size: 52px; line-height: .8; padding: 4px 8px 0 0; }
+.rec__ingttl { font-family: var(--head); color: var(--head-color); font-size: 19px; margin: 0 0 6px; display: flex; align-items: baseline; gap: 6px; }
+.rec__ingttl span { font-family: var(--body); font-style: italic; font-size: 14px; color: var(--ink-soft); font-weight: 400; }
+.ing { list-style: none; margin: 0; padding: 0; }
+.ing li { display: flex; gap: 9px; align-items: baseline; padding: 3px 0; }
+.ing li::before { content: "◆"; color: var(--accent); font-size: 9px; transform: translateY(-2px); }
+.ing__q { min-width: 84px; font-weight: 600; color: var(--ink); font-size: 14.5px; }
+.ing__n { font-size: 14.5px; color: var(--ink); }
+.pg--method { padding: 50px 46px 34px; display: flex; flex-direction: column; }
+.run-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1.5px solid var(--rule); padding-bottom: 8px; margin-bottom: 20px; font-style: italic; color: var(--ink-soft); font-size: 14px; }
+.run-head span:first-child { font-family: var(--head); font-style: normal; color: var(--head-color); font-size: 17px; }
+.method__ttl { font-family: var(--head); color: var(--head-color); font-size: 24px; margin-bottom: 14px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 13px; }
+.steps li { display: flex; gap: 13px; align-items: flex-start; }
+.steps__n { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); font-family: var(--head); display: grid; place-items: center; font-size: 15px; }
+.steps li p { margin: 3px 0 0; font-size: 14.5px; line-height: 1.48; }
+.tip { position: relative; margin-top: auto; background: #fbf5e3; border: 1px solid var(--paper-edge); border-radius: 4px; padding: 16px 18px 18px; box-shadow: 0 8px 20px -12px rgba(60,40,20,.4); transform: rotate(-.6deg); }
+.tip__pin { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 56px; height: 18px; background: rgba(177,129,46,.5); border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,.2); }
+.tip__ttl { font-family: var(--hand); font-size: 26px; color: var(--head-color); margin-bottom: 2px; }
+.tip__txt { font-family: var(--hand); font-size: 20px; line-height: 1.3; color: var(--ink); margin: 0; }
+.pg--back { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; gap: 6px; }
+.back__ttl { font-family: var(--head); font-size: 44px; color: var(--head-color); }
+.back__txt { font-style: italic; color: var(--ink-soft); max-width: 32ch; line-height: 1.55; margin: 6px 0; }
+.nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 20; width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(30,20,12,.32); color: #f4ead3; backdrop-filter: blur(6px); display: grid; place-items: center; cursor: pointer; transition: all .2s; }
+.nav-arrow:hover { background: rgba(30,20,12,.5); transform: translateY(-50%) scale(1.06); }
+.nav-arrow:disabled { opacity: 0; pointer-events: none; }
+.nav-arrow--prev { left: 28px; }
+.nav-arrow--next { right: 28px; }
+.hud { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 14px; color: #f4ead3; background: rgba(30,20,12,.36); backdrop-filter: blur(6px); padding: 9px 18px; border-radius: 100px; border: 1px solid rgba(255,255,255,.16); font-family: var(--head); font-size: 14px; }
+.hud button { background: none; border: 0; color: inherit; cursor: pointer; opacity: .8; display: grid; place-items: center; padding: 2px; font-size: 18px; line-height: 1; }
+.hud button:hover { opacity: 1; }
+.hud button:disabled { opacity: .3; cursor: default; }
+.hud__count { letter-spacing: .04em; min-width: 56px; text-align: center; }
+.brandlet { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 20; color: rgba(255,255,255,.72); font-family: var(--hand); font-size: 22px; white-space: nowrap; }
+.swatches { display: flex; gap: 9px; flex-wrap: wrap; }
+.swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(0,0,0,.12); cursor: pointer; transition: transform .15s; }
+.swatch:hover { transform: scale(1.1); }
+.swatch.on { box-shadow: 0 0 0 2px #fff, 0 0 0 4px currentColor; }
+@media (max-width: 600px) { .nav-arrow--prev { left: 8px; } .nav-arrow--next { right: 8px; } .brandlet { display: none; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="recipes.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="book.jsx"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "palette": "rosa",
+  "headFont": "Fraunces",
+  "backdrop": "rosa",
+  "pageTurn": true,
+  "notes": true
+}/*EDITMODE-END*/;
+const PALETTES = {
+  rosa:      { label: "Rosa & Azul",   head: "#b13e6b", accent: "#3f6f9c", cover: "#7a2f4e" },
+  azul:      { label: "Azul & Rosa",   head: "#34608c", accent: "#c25f86", cover: "#23415f" },
+  teal:      { label: "Teal & Ouro",   head: "#1f4e50", accent: "#b1812e", cover: "#233b3d" },
+  terracota: { label: "Terracota",     head: "#9c4426", accent: "#c08a2d", cover: "#4a2418" },
+  musgo:     { label: "Verde-musgo",   head: "#3c5230", accent: "#a9762c", cover: "#2c3a22" },
+};
+const BACKDROPS = {
+  rosa:     { label: "Rosa",     c: "#caa3ae", b1: "#cfa9b3", b2: "#a87f8b" },
+  ceu:      { label: "Azul-céu", c: "#9fb1c4", b1: "#a6b6c8", b2: "#7c8ea3" },
+  taupe:    { label: "Taupe",    c: "#a78f6f", b1: "#b09a7d", b2: "#8a7458" },
+  nogueira: { label: "Nogueira", c: "#5a4632", b1: "#6e5740", b2: "#43331f" },
+  carvao:   { label: "Ardósia",  c: "#4a4f55", b1: "#565d64", b2: "#33373c" },
+};
+const FONTS = ["Fraunces", "Playfair Display", "DM Serif Display"];
+const PAGES = window.Book.buildPages();
+const N = PAGES.length;
+const SPREADS = N / 2;
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [spread, setSpread] = useState(() => {
+    const v = parseInt(localStorage.getItem("vovo_spread") || "0", 10);
+    return isNaN(v) ? 0 : Math.max(0, Math.min(SPREADS - 1, v));
+  });
+  const [flip, setFlip] = useState(null);
+  const [scale, setScale] = useState(1);
+  useEffect(() => { localStorage.setItem("vovo_spread", String(spread)); }, [spread]);
+  useEffect(() => {
+    const p = PALETTES[t.palette] || PALETTES.teal;
+    const b = BACKDROPS[t.backdrop] || BACKDROPS.taupe;
+    const r = document.documentElement.style;
+    r.setProperty("--head-color", p.head);
+    r.setProperty("--accent", p.accent);
+    r.setProperty("--cover", p.cover);
+    r.setProperty("--rule", p.head + "73");
+    r.setProperty("--backdrop-1", b.b1);
+    r.setProperty("--backdrop-2", b.b2);
+    r.setProperty("--head", `"${t.headFont}", Georgia, serif`);
+  }, [t.palette, t.backdrop, t.headFont]);
+  useEffect(() => {
+    const fit = () => {
+      const BW = 1040, BH = 740;
+      const s = Math.min((window.innerWidth - 150) / BW, (window.innerHeight - 120) / BH);
+      setScale(Math.max(0.3, Math.min(1.18, s)));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
+  const go = useCallback((dir) => {
+    if (flip) return;
+    if (dir === "next" && spread >= SPREADS - 1) return;
+    if (dir === "prev" && spread <= 0) return;
+    if (!t.pageTurn) { setSpread((s) => s + (dir === "next" ? 1 : -1)); return; }
+    setFlip({ dir, going: false });
+    requestAnimationFrame(() => requestAnimationFrame(() => setFlip({ dir, going: true })));
+    setTimeout(() => { setSpread((s) => s + (dir === "next" ? 1 : -1)); setFlip(null); }, 740);
+  }, [flip, spread, t.pageTurn]);
+  const jump = useCallback((target) => {
+    let idx = -1;
+    if (target.kind === "section") idx = PAGES.findIndex((p) => p.kind === "section" && p.sec.cuisine === target.cuisine);
+    else if (target.kind === "recipe") idx = PAGES.findIndex((p) => p.kind === "recipe" && p.recipe.id === target.id);
+    else if (target.kind === "menu") idx = PAGES.findIndex((p) => p.kind === "menu" && p.head);
+    if (idx < 0) return;
+    setFlip(null);
+    setSpread(Math.floor(idx / 2));
+  }, []);
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "ArrowRight") go("next");
+      else if (e.key === "ArrowLeft") go("prev");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go]);
+  const { Page } = window.Book;
+  let leftPage = PAGES[2 * spread];
+  let rightPage = PAGES[2 * spread + 1];
+  let flipFront = null, flipBack = null;
+  if (flip) {
+    if (flip.dir === "next") {
+      leftPage = PAGES[2 * spread];
+      rightPage = PAGES[2 * spread + 3];
+      flipFront = PAGES[2 * spread + 1];
+      flipBack = PAGES[2 * spread + 2];
+    } else {
+      rightPage = PAGES[2 * spread + 1];
+      leftPage = PAGES[2 * spread - 2];
+      flipFront = PAGES[2 * spread];
+      flipBack = PAGES[2 * spread - 1];
+    }
+  }
+  const flipCls = "flip flip--" + (flip ? flip.dir : "next") + (flip && flip.going ? " go" : "");
+  const slotClick = (e, dir) => {
+    if (e.target.closest(".toc__row, .section__list li, .menu__item")) return;
+    go(dir);
+  };
+  return (
+    <div className="stage">
+      <span className="brandlet">Receituário da Vovó</span>
+      <button className="nav-arrow nav-arrow--prev" onClick={() => go("prev")} disabled={spread <= 0} aria-label="Página anterior">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
+      </button>
+      <div className="book-wrap" style={{ transform: `scale(${scale})` }}>
+        <div className={"book" + (t.pageTurn ? "" : " noturn")}>
+          <div className="slot slot--left" onClick={(e) => slotClick(e, "prev")}>
+            <Page p={leftPage} side="left" onJump={jump} notes={t.notes} />
+          </div>
+          <div className="slot slot--right" onClick={(e) => slotClick(e, "next")}>
+            <Page p={rightPage} side="right" onJump={jump} notes={t.notes} />
+          </div>
+          {flip && (
+            <div className={flipCls}>
+              <div className="flip__face flip__front">
+                <Page p={flipFront} side={flip.dir === "next" ? "right" : "left"} notes={t.notes} />
+                <span className="flip__shade" />
+              </div>
+              <div className="flip__face flip__back">
+                <Page p={flipBack} side={flip.dir === "next" ? "left" : "right"} notes={t.notes} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <button className="nav-arrow nav-arrow--next" onClick={() => go("next")} disabled={spread >= SPREADS - 1} aria-label="Próxima página">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+      </button>
+      <div className="hud">
+        <button onClick={() => setSpread(0)} title="Capa">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 0-2 2zM4 19a2 2 0 0 1 2-2h12" /></svg>
+        </button>
+        <button onClick={() => go("prev")} disabled={spread <= 0}>‹</button>
+        <span className="hud__count">{spread + 1} / {SPREADS}</span>
+        <button onClick={() => go("next")} disabled={spread >= SPREADS - 1}>›</button>
+        <button onClick={() => setSpread(1)} title="Sumário">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" /></svg>
+        </button>
+      </div>
+      <TweaksPanel>
+        <TweakSection label="Paleta" />
+        <TweakRow label="Cores do livro">
+          <div className="swatches">
+            {Object.entries(PALETTES).map(([k, v]) => (
+              <button key={k} className={"swatch" + (t.palette === k ? " on" : "")} title={v.label}
+                style={{ background: `linear-gradient(135deg, ${v.head} 50%, ${v.accent} 50%)`, color: v.head }}
+                onClick={() => setTweak("palette", k)} />
+            ))}
+          </div>
+        </TweakRow>
+        <TweakRow label="Fundo">
+          <div className="swatches">
+            {Object.entries(BACKDROPS).map(([k, v]) => (
+              <button key={k} className={"swatch" + (t.backdrop === k ? " on" : "")} title={v.label}
+                style={{ background: v.c, color: v.c }} onClick={() => setTweak("backdrop", k)} />
+            ))}
+          </div>
+        </TweakRow>
+        <TweakSection label="Tipografia" />
+        <TweakSelect label="Fonte dos títulos" value={t.headFont} options={FONTS} onChange={(v) => setTweak("headFont", v)} />
+        <TweakSection label="Leitura" />
+        <TweakToggle label="Virar páginas (3D)" value={t.pageTurn} onChange={(v) => setTweak("pageTurn", v)} />
+        <TweakToggle label="Bilhetes da vovó" value={t.notes} onChange={(v) => setTweak("notes", v)} />
+      </TweaksPanel>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
