@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Receituário da Vovó</title>
+<title>Receituário da Babusda</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Playfair+Display:ital,wght@0,500..800;1,500..600&family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400..600;1,400..500&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -980,7 +980,7 @@ const TIPS = {
   lasanha: "Monte na véspera e asse no dia. Descansada, ela corta em fatias certinhas.",
   "pao-de-queijo": "Polvilho azedo dá a casquinha; um pouco de doce, a maciez. O segredo é misturar os dois.",
   ramen: "O ovo é sagrado: seis minutos e meio cravados e um banho de água gelada logo depois.",
-  tacos: "Uma fatia de abacaxi grelhado por cima equilibra a gordura da carne. Confie na vovó.",
+  tacos: "Uma fatia de abacaxi grelhado por cima equilibra a gordura da carne. Confie na Babusda.",
   "curry-grao": "Toste o curry no óleo antes de tudo. É esse minutinho que solta todo o aroma.",
   brigadeiro: "O ponto é quando você inclina a panela e a massa desliza inteira do fundo.",
   caprese: "Tomate fora da geladeira tem o dobro do sabor. Tempere só na hora de servir.",
@@ -1075,7 +1075,7 @@ function Page({ p, side, onJump, notes }) {
         <div className="cover__frame">
           <p className="cover__kick">Coleção de família</p>
           <Ornament w={130} />
-          <h1 className="cover__title">Receituário<br />da Vovó</h1>
+          <h1 className="cover__title">Receituário<br />da Babusda</h1>
           <p className="cover__sub">Pratos de casa e de mundo, reunidos com carinho ao longo dos anos.</p>
           <Ornament w={130} />
           <p className="cover__sign">— anotado à mão, com amor</p>
@@ -1189,7 +1189,7 @@ function Page({ p, side, onJump, notes }) {
         {notes && (
           <aside className="tip">
             <span className="tip__pin" />
-            <h4 className="tip__ttl">Cantinho da Vovó</h4>
+            <h4 className="tip__ttl">Cantinho da Babusda</h4>
             <p className="tip__txt">{TIPS[r.id]}</p>
           </aside>
         )}
@@ -1245,7 +1245,7 @@ function Page({ p, side, onJump, notes }) {
         <Ornament w={120} />
         <h2 className="back__ttl">Bom apetite!</h2>
         <p className="back__txt">Que estas receitas encontrem sempre uma mesa cheia e gente querida em volta. Cozinhar é cuidar.</p>
-        <p className="cover__sign">— da cozinha da vovó para a sua</p>
+        <p className="cover__sign">— da cozinha da Babusda para a sua</p>
         <Ornament w={120} />
         <Folio p={p} side={side} />
       </div>
@@ -1367,7 +1367,7 @@ function App() {
   };
   return (
     <div className="stage">
-      <span className="brandlet">Receituário da Vovó</span>
+      <span className="brandlet">Receituário da Babusda</span>
       <button className="nav-arrow nav-arrow--prev" onClick={() => go("prev")} disabled={spread <= 0} aria-label="Página anterior">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
       </button>
@@ -1429,7 +1429,7 @@ function App() {
         <TweakSelect label="Fonte dos títulos" value={t.headFont} options={FONTS} onChange={(v) => setTweak("headFont", v)} />
         <TweakSection label="Leitura" />
         <TweakToggle label="Virar páginas (3D)" value={t.pageTurn} onChange={(v) => setTweak("pageTurn", v)} />
-        <TweakToggle label="Bilhetes da vovó" value={t.notes} onChange={(v) => setTweak("notes", v)} />
+        <TweakToggle label="Bilhetes da Babusda" value={t.notes} onChange={(v) => setTweak("notes", v)} />
       </TweaksPanel>
     </div>
   );
