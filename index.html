@@ -106,11 +106,12 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; }
 .section__partnum { font-family: var(--head); font-weight: 600; font-size: 28px; color: #fff; background: var(--head-color); padding: 3px 12px; border-radius: 3px; }
 .section__title { font-family: var(--head); font-size: 44px; line-height: 1.04; color: var(--head-color); letter-spacing: -.015em; margin: 8px 0 18px; }
 .section__band { background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 82%, #000)); color: #fff7e6; font-style: italic; padding: 12px 16px; border-radius: 3px; font-size: 15.5px; line-height: 1.45; }
-.section__list { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
-.section__list li { display: flex; gap: 12px; align-items: baseline; cursor: pointer; padding: 5px 6px; border-radius: 5px; transition: background .18s; }
+.section__list { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.section__list--multi { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; row-gap: 5px; }
+.section__list li { display: flex; gap: 10px; align-items: baseline; cursor: pointer; padding: 4px 6px; border-radius: 5px; transition: background .18s; }
 .section__list li:hover { background: rgba(31,78,80,.08); }
-.section__li-num { font-family: var(--head); color: var(--accent); font-size: 17px; }
-.section__li-name { font-family: var(--body); font-size: 18px; color: var(--ink); }
+.section__li-num { font-family: var(--head); color: var(--accent); font-size: 15px; min-width: 22px; }
+.section__li-name { font-family: var(--body); font-size: 15.5px; color: var(--ink); line-height: 1.3; }
 .pg--motif { color: #f4ecd6; display: grid; place-items: center; background: linear-gradient(150deg, color-mix(in oklab, var(--head-color) 88%, #fff 8%), var(--head-color) 55%, color-mix(in oklab, var(--head-color) 74%, #000 22%)); }
 .motif__inner { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 2; }
 .motif__cuisine { font-style: italic; letter-spacing: .2em; text-transform: uppercase; font-size: 16px; color: rgba(255,255,255,.85); }
@@ -1686,7 +1687,7 @@ function Page({ p, side, onJump, notes }) {
         </div>
         <h2 className="section__title">{p.sec.title}</h2>
         <div className="section__band">{p.sec.desc}</div>
-        <ol className="section__list">
+        <ol className={"section__list" + (p.recipes.length > 6 ? " section__list--multi" : "")}>
           {p.recipes.map((r, i) => (
             <li key={r.id} onClick={() => onJump && onJump({ kind: "recipe", id: r.id })}>
               <span className="section__li-num">{i + 1}.</span>
